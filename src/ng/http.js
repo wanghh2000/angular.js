@@ -1075,6 +1075,20 @@ function $HttpProvider() {
       promise = chainInterceptors(promise, responseInterceptors);
       promise = promise.finally(completeOutstandingRequest);
 
+      promise.success = function(fn) {
+        promise.then(function(response) {
+          fn(response.data, response.status, response.headers, config);
+        });
+        return promise;
+      };
+
+      promise.error = function(fn) {
+        promise.then(null, function(response) {
+          fn(response.data, response.status, response.headers, config);
+        });
+        return promise;
+      };
+      
       return promise;
 
 
